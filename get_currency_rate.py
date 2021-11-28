@@ -12,9 +12,9 @@ from sqlite3 import Error
 
 # Pipeline constant parameters. 
 # Modify this to load a different base currency or a different time frame
-base_currency = "EUR"
-start_date = "2021-11-19"
-end_date = "2021-11-26"
+base_currency = "USD"
+start_date = "2021-02-01"
+end_date = "2021-11-28"
 
 #Config file
 config = configparser.ConfigParser()
@@ -69,6 +69,7 @@ def get_currency_api_data():
 
         df = df[['base_code', 'date', 'rate', 'currency_code']]
 
+        print(f"Currency rate for {base_currency} between {start_date} and {end_date} succesfuly loaded ")
         return df
 
     else:
@@ -89,17 +90,18 @@ def connect_to_sqlLite():
 # Store the data into a sqlite database
 def store_date_sqlite(df, conn):
     df.to_sql('currency_conversion', conn, if_exists='append', index=False)
+    cur = conn.cursor()
     print(f"{len(df.index)} rows added to the database ")
     return conn
 
 # Calcuate the average of currency over a period of time
-def get_currency_average_rate_over_time(currency, date_start, date_end, conn):
+def get_currency_average_rate_over_time(start_currency, target_currency, date_start, date_end, conn):
     cur = conn.cursor()
-    cur.execute("SELECT AVG(rate) FROM currency_conversion WHERE currency_code=? AND date > ? AND date < ?",
-                (currency, date_start, date_end))
+    cur.execute("SELECT AVG(rate) FROM currency_conversion WHERE base_code = ? AND currency_code=? AND date >= ? AND date <= ?",
+                (start_currency, target_currency, date_start, date_end))
     result = cur.fetchone()[0]
     print(
-        f" The exchange rate for {currency} between {date_start} and {date_end} is : {result:.4f}")
+        f" The average exchange rate from {start_currency} to {target_currency} between {date_start} and {date_end} is : {result:.4f}")
 
 
 # Gets Data From APi
@@ -112,4 +114,4 @@ conn = connect_to_sqlLite()
 store_date_sqlite(df, conn)
 
 # Calcuates the average rate of currency over time
-get_currency_average_rate_over_time("MAD", "2021-11-19", "2021-11-26", conn)
+get_currency_average_rate_over_time("USD", "EUR", "2021-03-20", "2021-11-26", conn)
