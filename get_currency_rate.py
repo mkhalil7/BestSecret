@@ -12,7 +12,7 @@ from sqlite3 import Error
 
 # Pipeline constant parameters. 
 # Modify this to load a different base currency or a different time frame
-base_currency = "USD"
+base_currency = "EUR"
 start_date = "2021-02-01"
 end_date = "2021-11-28"
 
