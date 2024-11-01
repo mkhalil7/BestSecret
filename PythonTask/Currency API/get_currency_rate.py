@@ -114,4 +114,4 @@ conn = connect_to_sqlLite()
 store_date_sqlite(df, conn)
 
 # Calcuates the average rate of currency over time
-get_currency_average_rate_over_time("USD", "EUR", "2021-03-20", "2021-11-26", conn)
+get_currency_average_rate_over_time("EUR", "USD", "2021-03-20", "2021-11-26", conn)
